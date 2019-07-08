@@ -69,4 +69,28 @@ app.get('/api/users/:id', (req, res) => {
     })
 });
 
+app.delete('/api/users/:id', (req, res) => {
+  const id = Number(req.params.id);
+  if (Number.isNaN(id) || id % 1 !== 0 || id < 0) {
+    return res.status(400).send({
+      message: `The user ID provided is not valid`,
+    });
+  }
+  userModel.remove(id)
+    .then(data => {
+      if (data === 1) 
+        return res.status(200).json({
+          message: 'User deleted successfully'
+        })
+      return res.status(404).json({
+        message: 'The user with the specified ID does not exist.',
+      })
+    }).catch((error => {
+      console.log(error)
+      return res.status(500).json({
+        error: 'The user could not be removed'
+      })
+    }))
+})
+
 app.listen(1900, () => console.log('app listening on port 1900'));
