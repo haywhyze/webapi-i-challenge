@@ -51,7 +51,7 @@ app.get('/api/users/:id', (req, res) => {
   const id = Number(req.params.id);
   if (Number.isNaN(id) || id % 1 !== 0 || id < 0) {
     return res.status(400).send({
-      error: `user ID provided is not valid`,
+      message: `The user ID provided is not valid`,
     });
   }
   userModel.findById(id)
@@ -59,7 +59,7 @@ app.get('/api/users/:id', (req, res) => {
       if (data) 
         return res.status(200).json(data)
       return res.status(404).json({
-        error: 'user ID provided does not exist',
+        message: 'The user with the specified ID does not exist.',
       })
     })
 });
