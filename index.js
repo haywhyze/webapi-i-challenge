@@ -4,10 +4,23 @@ const userModel = require('./data/db');
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.send('Welcome to Lambda Users API')
 });
+
+app.post('/api/users', (req, res) => {
+  const newUser = {
+    name: req.body.name,
+    bio: req.body.bio,
+  }
+  userModel.insert(newUser).then(data => {
+    res.status(201).json(data)
+  }).catch((error => {
+    console.log(error)
+  }))
+})
 
 app.get('/api/users', (req, res) => {
   userModel.find()
