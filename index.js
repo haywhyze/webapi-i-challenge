@@ -93,4 +93,46 @@ app.delete('/api/users/:id', (req, res) => {
     }))
 })
 
+app.put('/api/users/:id', (req, res) => {
+  const { name, bio } = req.body;
+  const id = Number(req.params.id);
+  if (Number.isNaN(id) || id % 1 !== 0 || id < 0) {
+    return res.status(400).send({
+      message: `The user ID provided is not valid`,
+    });
+  }
+
+  userModel.findById(id)
+    .then(data => {
+      if (data) {
+        if (!name || !bio ) {
+          return res.status(400).send({
+            errorMessage: 'Please provide name and bio for the user.',
+          });
+        }
+        const newUser = {
+          name: req.body.name,
+          bio: req.body.bio,
+        }
+        userModel.update(id, newUser)
+          .then(data => {
+            return res.status(200).json(data)
+          }).catch(error => {
+            console.log(error)
+            return res.status(500).json({
+              error: 'The user information could not be modified.'
+            })
+          })
+      }
+      else return res.status(404).json({
+        message: 'The user with the specified ID does not exist.',
+      })
+    }).catch(error => {
+      console.log(error)
+      return res.status(500).json({
+        error: 'The user information could not be retrieved.'
+      })
+    })
+})
+
 app.listen(1900, () => console.log('app listening on port 1900'));
